@@ -5,7 +5,7 @@ from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
 from vcjobsearch.items import VcjobsearchItem
 
-def recursive_ascii_encode(list):
+def recursive_ascii_encode(list): #Encode list as a string of ascii characters
 	ret = []
 	for x in list:
 		if isinstance(x, basestring):
@@ -27,12 +27,25 @@ class A16zSpider(scrapy.Spider):
 		items = []
 		for sel in response.xpath('//div[contains(concat(" ", normalize-space(@class), " "), " company ")]'):
 			item = VcjobsearchItem()
+			
 			companyName = sel.xpath('./div[@class="meta"]/div[1]/text()').extract()
-			item['companyName'] = recursive_ascii_encode(companyName)
+			companyName = recursive_ascii_encode(companyName)
+			name = ''.join(companyName)
+			name = name.strip(' \t\n\r')
+			item['companyName'] = name
+			
 			companyLoc = sel.xpath('./div[@class="meta"]/div[3]/text()').extract()
-			item['companyLoc'] = recursive_ascii_encode(companyLoc)
+			companyLoc = recursive_ascii_encode(companyLoc)
+			location = ''.join(companyLoc)
+			location = location.strip(' \t\n\r')
+			item['companyLoc'] = location
+			
 			companyType = sel.xpath('./div[@class="meta"]/div[6]/text()[2]').extract()
-			item['companyType'] = recursive_ascii_encode(companyType)
+			companyType = recursive_ascii_encode(companyType)
+			description = ''.join(companyType)
+			description = description.strip(' \t\n\r')
+			item['companyType'] = description
+
 			companyURL = sel.xpath('./div[@class="meta"]/div/a/@href').extract()
 			companyURL = recursive_ascii_encode(companyURL)
 			link = ''.join(companyURL)
@@ -47,7 +60,7 @@ class A16zSpider(scrapy.Spider):
 				print e
 			except requests.exceptions.ConnectionError as e:
 				print e
-				#r = "No Response"
+
 			if jobsRequest.status_code < 400:
 				item['companyJobs'] = link + "/jobs"
 			else:
