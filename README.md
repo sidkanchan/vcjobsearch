@@ -6,8 +6,8 @@ Scrapes a company's name, url, location, description, and finds their careers we
 
 
 **How to Use:**  
-1. Go to top-level directory
-2. Run 'scrapy crawl a16z > items.json' to output scraped data to json file.
+1. Go to top-level directory  
+2. Run 'scrapy crawl a16z > items.json' to output scraped data to json file.  
 3. Profit
 
 
